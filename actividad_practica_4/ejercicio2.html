@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ejercicio 2 - ISR mensual</title>
+</head>
+<body>
+    <h1>Cálculo de ISR mensual</h1>
+    <p>
+        <label for="sueldo">Sueldo mensual ($)</label>
+        <input type="number" id="sueldo" min="0" step="0.01" required>
+    </p>
+    <button type="button" onclick="calcularISR()">Calcular</button>
+    <div id="resultado" role="status"></div>
+
+    <script>
+        function calcularISR() {
+            const valorSueldo = document.getElementById("sueldo").value;
+            const sueldo = Number(valorSueldo);
+            const resultado = document.getElementById("resultado");
+
+            if (valorSueldo === "" || !Number.isFinite(sueldo) || sueldo < 0) {
+                resultado.innerHTML = "<p>Ingresa un sueldo mayor o igual a cero.</p>";
+                return;
+            }
+
+            let baseISSS = sueldo;
+            if (sueldo > 1000) {
+                baseISSS = 1000;
+            }
+
+            const isss = Number((baseISSS * 0.03).toFixed(2));
+            const afp = Number((sueldo * 0.0725).toFixed(2));
+            const sueldoGravable = Number((sueldo - isss - afp).toFixed(2));
+            let isr;
+
+            if (sueldoGravable <= 472) {
+                isr = 0;
+            } else if (sueldoGravable <= 895.24) {
+                isr = (sueldoGravable - 472) * 0.10 + 17.67;
+            } else if (sueldoGravable <= 2038.10) {
+                isr = (sueldoGravable - 895.24) * 0.20 + 60;
+            } else {
+                isr = (sueldoGravable - 2038.10) * 0.30 + 288.57;
+            }
+
+            isr = Number(isr.toFixed(2));
+            const sueldoNeto = sueldoGravable - isr;
+
+            resultado.innerHTML =
+                "<p>Sueldo ingresado: $" + sueldo.toFixed(2) + "</p>" +
+                "<p>ISSS: $" + isss.toFixed(2) + "</p>" +
+                "<p>AFP: $" + afp.toFixed(2) + "</p>" +
+                "<p>Sueldo gravable: $" + sueldoGravable.toFixed(2) + "</p>" +
+                "<p>ISR: $" + isr.toFixed(2) + "</p>" +
+                "<p>Sueldo neto: $" + sueldoNeto.toFixed(2) + "</p>";
+        }
+    </script>
+</body>
+</html>

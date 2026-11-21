@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ejercicio 3 - Conversión de monedas</title>
+</head>
+<body>
+    <h1>Conversión de monedas</h1>
+    <p>
+        <label for="conversion">Conversión</label>
+        <select id="conversion" required>
+            <option value="">Selecciona una opción</option>
+            <option value="dolares-colones">Dólares a colones</option>
+            <option value="colones-dolares">Colones a dólares</option>
+            <option value="dolares-bitcoin">Dólares a Bitcoin</option>
+            <option value="bitcoin-dolares">Bitcoin a dólares</option>
+            <option value="colones-bitcoin">Colones a Bitcoin</option>
+            <option value="bitcoin-colones">Bitcoin a colones</option>
+        </select>
+    </p>
+    <p>
+        <label for="monto">Monto</label>
+        <input type="number" id="monto" min="0" step="any" required>
+    </p>
+    <p>
+        <label for="cotizacion">Precio de 1 BTC en dólares (para conversiones con Bitcoin)</label>
+        <input type="number" id="cotizacion" min="0" step="any">
+    </p>
+    <button type="button" onclick="convertirMoneda()">Convertir</button>
+    <div id="resultado" role="status"></div>
+
+    <script>
+        function convertirMoneda() {
+            const conversion = document.getElementById("conversion").value;
+            const valorMonto = document.getElementById("monto").value;
+            const monto = Number(valorMonto);
+            const cotizacion = Number(document.getElementById("cotizacion").value);
+            const resultado = document.getElementById("resultado");
+            const colonesPorDolar = 8.75;
+
+            if (conversion === "" || valorMonto === "" || !Number.isFinite(monto) || monto < 0) {
+                resultado.innerHTML = "<p>Selecciona una conversión e ingresa un monto mayor o igual a cero.</p>";
+                return;
+            }
+
+            if (conversion !== "dolares-colones" && conversion !== "colones-dolares") {
+                if (!Number.isFinite(cotizacion) || cotizacion <= 0) {
+                    resultado.innerHTML = "<p>Ingresa una cotización de Bitcoin mayor que cero.</p>";
+                    return;
+                }
+            }
+
+            let convertido;
+            let monedaOriginal;
+            let monedaConvertida;
+
+            if (conversion === "dolares-colones") {
+                convertido = monto * colonesPorDolar;
+                monedaOriginal = "USD";
+                monedaConvertida = "SVC";
+            } else if (conversion === "colones-dolares") {
+                convertido = monto / colonesPorDolar;
+                monedaOriginal = "SVC";
+                monedaConvertida = "USD";
+            } else if (conversion === "dolares-bitcoin") {
+                convertido = monto / cotizacion;
+                monedaOriginal = "USD";
+                monedaConvertida = "BTC";
+            } else if (conversion === "bitcoin-dolares") {
+                convertido = monto * cotizacion;
+                monedaOriginal = "BTC";
+                monedaConvertida = "USD";
+            } else if (conversion === "colones-bitcoin") {
+                convertido = monto / colonesPorDolar / cotizacion;
+                monedaOriginal = "SVC";
+                monedaConvertida = "BTC";
+            } else {
+                convertido = monto * cotizacion * colonesPorDolar;
+                monedaOriginal = "BTC";
+                monedaConvertida = "SVC";
+            }
+
+            if (!Number.isFinite(convertido)) {
+                resultado.innerHTML = "<p>El resultado supera el rango numérico.</p>";
+                return;
+            }
+
+            let decimalesOriginal = 2;
+            let decimalesConvertido = 2;
+            if (monedaOriginal === "BTC") {
+                decimalesOriginal = 8;
+            }
+            if (monedaConvertida === "BTC") {
+                decimalesConvertido = 8;
+            }
+
+            resultado.innerHTML =
+                "<p>Monto original: " + monto.toFixed(decimalesOriginal) + " " + monedaOriginal + "</p>" +
+                "<p>Monto convertido: " + convertido.toFixed(decimalesConvertido) + " " + monedaConvertida + "</p>";
+        }
+    </script>
+</body>
+</html>

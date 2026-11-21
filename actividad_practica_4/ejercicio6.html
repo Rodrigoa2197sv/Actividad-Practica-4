@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ejercicio 6 - Sueldo semanal</title>
+</head>
+<body>
+    <h1>Sueldo semanal</h1>
+    <p>
+        <label for="nombre">Nombre del trabajador</label>
+        <input type="text" id="nombre" required>
+    </p>
+    <p>
+        <label for="dui">DUI</label>
+        <input type="text" id="dui" required>
+    </p>
+    <p>
+        <label for="horas">Horas trabajadas</label>
+        <input type="number" id="horas" min="0" step="any" required>
+    </p>
+    <button type="button" onclick="calcularSueldo()">Calcular</button>
+    <div id="resultado" role="status"></div>
+
+    <script>
+        function calcularSueldo() {
+            const nombre = document.getElementById("nombre").value.trim();
+            const dui = document.getElementById("dui").value.trim();
+            const valorHoras = document.getElementById("horas").value;
+            const horas = Number(valorHoras);
+            const resultado = document.getElementById("resultado");
+
+            if (nombre === "" || dui === "" || valorHoras === "" || !Number.isFinite(horas) || horas < 0) {
+                resultado.innerHTML = "<p>Ingresa el nombre, el DUI y una cantidad de horas mayor o igual a cero.</p>";
+                return;
+            }
+
+            let horasNormales = horas;
+            let horasExtras = 0;
+            if (horas > 40) {
+                horasNormales = 40;
+                horasExtras = horas - 40;
+            }
+
+            const sueldoTotal = horasNormales * 10 + horasExtras * 20;
+
+            resultado.innerHTML =
+                "<p>Nombre: <span id='nombreMostrado'></span></p>" +
+                "<p>DUI: <span id='duiMostrado'></span></p>" +
+                "<p>Horas normales: " + horasNormales + "</p>" +
+                "<p>Horas extras: " + Number(horasExtras.toFixed(10)) + "</p>" +
+                "<p>Sueldo total semanal: $" + sueldoTotal.toFixed(2) + "</p>";
+            document.getElementById("nombreMostrado").textContent = nombre;
+            document.getElementById("duiMostrado").textContent = dui;
+        }
+    </script>
+</body>
+</html>
